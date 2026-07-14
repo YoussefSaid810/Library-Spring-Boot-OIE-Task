@@ -1,0 +1,17 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+server:
+  port: 8081
+
+library:
+  name: "Alex Library (Development)"
+  description: "Development environment"
+  max-books: 100
+
+logging:
+  level:
+    com.example.library: DEBUG
+    root: INFO

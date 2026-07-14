@@ -1,0 +1,17 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+server:
+  port: 8081
+
+library:
+  name: "Alex Library (Production)"
+  description: "Production environment"
+  max-books: 10000
+
+logging:
+  level:
+    com.example.library: INFO
+    root: WARN

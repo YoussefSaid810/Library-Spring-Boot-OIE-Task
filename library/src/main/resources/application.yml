@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: library
+
+server:
+  port: 8081
+
+library:
+  name: "Alex Library"
+  description: "library management system"
+  version: "1.0.0"
+  max-books: 1000
