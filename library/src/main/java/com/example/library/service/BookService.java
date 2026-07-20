@@ -30,7 +30,7 @@ public class BookService {
 
     public Book addBook(Book book) {
         log.info("Adding new book: {} by {}", book.title(), book.author());
-        Book newBook = new Book(nextId++, book.title(), book.author(), book.category());
+        Book newBook = new Book(nextId++, book.title(), book.author(), book.category(), true);
         books.add(newBook);
         log.debug("Book added with id: {}", newBook.id());
         return newBook;
@@ -39,7 +39,7 @@ public class BookService {
     public Optional<Book> updateBook(Long id, Book updatedBook) {
         log.info("Updating book with id: {}", id);
         return getBookById(id).map(existing -> {
-            Book book = new Book(id, updatedBook.title(), updatedBook.author(), updatedBook.category());
+            Book book = new Book(id, updatedBook.title(), updatedBook.author(), updatedBook.category(), updatedBook.available());
             books.remove(existing);
             books.add(book);
             log.debug("Book updated: {}", book);
@@ -47,14 +47,28 @@ public class BookService {
         });
     }
 
+    public Optional<Book> setBookAvailability(Long id, boolean available) {
+        return getBookById(id).map(existing -> {
+            Book book = new Book(id, existing.title(), existing.author(), existing.category(), available);
+            books.remove(existing);
+            books.add(book);
+            log.debug("Book {} availability set to {}", id, available);
+            return book;
+        });
+    }
+
     public boolean deleteBook(Long id) {
         log.info("Deleting book with id: {}", id);
-        boolean deleted = getBookById(id).map(books::remove).orElse(false);
-        if (deleted) {
-            log.debug("Book deleted successfully");
-        } else {
+        Optional<Book> book = getBookById(id);
+        if (book.isEmpty()) {
             log.warn("Book with id {} not found for deletion", id);
+            return false;
         }
-        return deleted;
+        if (!book.get().available()) {
+            throw new IllegalStateException("Cannot delete book " + id + ": book is currently borrowed");
+        }
+        books.remove(book.get());
+        log.debug("Book deleted successfully");
+        return true;
     }
 }

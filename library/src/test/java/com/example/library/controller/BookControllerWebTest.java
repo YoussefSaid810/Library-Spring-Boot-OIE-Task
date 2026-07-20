@@ -34,7 +34,7 @@ class BookControllerWebTest {
 
     @BeforeEach
     void setUp() {
-        testBook = new Book(1L, "Spring in Action", "Craig Walls", "Programming");
+        testBook = new Book(1L, "Spring in Action", "Craig Walls", "Programming", true);
     }
 
     @Test

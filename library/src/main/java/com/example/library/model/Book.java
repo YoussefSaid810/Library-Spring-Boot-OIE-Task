@@ -5,5 +5,6 @@ public record Book(
     Long id,
     String title,
     String author,
-    String category
+    String category,
+    boolean available
 ) {}

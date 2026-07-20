@@ -30,7 +30,7 @@ class BookControllerTest {
 
     @BeforeEach
     void setUp() {
-        testBook = new Book(1L, "Test Book", "Test Author", "Test Category");
+        testBook = new Book(1L, "Test Book", "Test Author", "Test Category", true);
     }
 
     @Test
@@ -68,7 +68,7 @@ class BookControllerTest {
     @Test
     @DisplayName("Should add book")
     void shouldAddBook() {
-        Book newBook = new Book(null, "New Book", "New Author", "New Category");
+        Book newBook = new Book(null, "New Book", "New Author", "New Category", true);
         when(bookService.addBook(any(Book.class))).thenReturn(testBook);
 
         Book added = bookController.addBook(newBook);
@@ -81,7 +81,7 @@ class BookControllerTest {
     @Test
     @DisplayName("Should update book")
     void shouldUpdateBook() {
-        Book updatedBook = new Book(null, "Updated", "Updated Author", "Updated Category");
+        Book updatedBook = new Book(null, "Updated", "Updated Author", "Updated Category", true);
         when(bookService.updateBook(eq(1L), any(Book.class))).thenReturn(Optional.of(testBook));
 
         var response = bookController.updateBook(1L, updatedBook);

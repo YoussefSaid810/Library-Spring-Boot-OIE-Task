@@ -22,7 +22,7 @@ class BookServiceTest {
     @Test
     @DisplayName("Should add a book and return it with generated id")
     void shouldAddBook() {
-        Book book = new Book(null, "Spring in Action", "Craig Walls", "Programming");
+        Book book = new Book(null, "Spring in Action", "Craig Walls", "Programming", true);
         
         Book added = bookService.addBook(book);
         
@@ -35,8 +35,8 @@ class BookServiceTest {
     @Test
     @DisplayName("Should get all books")
     void shouldGetAllBooks() {
-        bookService.addBook(new Book(null, "Book 1", "Author 1", "Category 1"));
-        bookService.addBook(new Book(null, "Book 2", "Author 2", "Category 2"));
+        bookService.addBook(new Book(null, "Book 1", "Author 1", "Category 1", true));
+        bookService.addBook(new Book(null, "Book 2", "Author 2", "Category 2", true));
         
         List<Book> books = bookService.getAllBooks();
         
@@ -46,7 +46,7 @@ class BookServiceTest {
     @Test
     @DisplayName("Should get book by id")
     void shouldGetBookById() {
-        Book added = bookService.addBook(new Book(null, "Test Book", "Test Author", "Test Category"));
+        Book added = bookService.addBook(new Book(null, "Test Book", "Test Author", "Test Category", true));
         
         Optional<Book> found = bookService.getBookById(added.id());
         
@@ -65,8 +65,8 @@ class BookServiceTest {
     @Test
     @DisplayName("Should update book")
     void shouldUpdateBook() {
-        Book added = bookService.addBook(new Book(null, "Old Title", "Old Author", "Old Category"));
-        Book updated = new Book(null, "New Title", "New Author", "New Category");
+        Book added = bookService.addBook(new Book(null, "Old Title", "Old Author", "Old Category", true));
+        Book updated = new Book(null, "New Title", "New Author", "New Category", true);
         
         Optional<Book> result = bookService.updateBook(added.id(), updated);
         
@@ -78,8 +78,8 @@ class BookServiceTest {
     @Test
     @DisplayName("Should return empty when updating non-existent book")
     void shouldReturnEmptyWhenUpdatingNonExistentBook() {
-        Book updated = new Book(null, "New Title", "New Author", "New Category");
-        
+        Book updated = new Book(null, "New Title", "New Author", "New Category", true);
+
         Optional<Book> result = bookService.updateBook(999L, updated);
         
         assertFalse(result.isPresent());
@@ -88,7 +88,7 @@ class BookServiceTest {
     @Test
     @DisplayName("Should delete book")
     void shouldDeleteBook() {
-        Book added = bookService.addBook(new Book(null, "To Delete", "Author", "Category"));
+        Book added = bookService.addBook(new Book(null, "To Delete", "Author", "Category", true));
         
         boolean deleted = bookService.deleteBook(added.id());
         
@@ -100,7 +100,19 @@ class BookServiceTest {
     @DisplayName("Should return false when deleting non-existent book")
     void shouldReturnFalseWhenDeletingNonExistentBook() {
         boolean deleted = bookService.deleteBook(999L);
-        
+
         assertFalse(deleted);
+    }
+
+    @Test
+    @DisplayName("Should throw exception when deleting borrowed book")
+    void shouldThrowWhenDeletingBorrowedBook() {
+        Book added = bookService.addBook(new Book(null, "Borrowed", "Author", "Category", true));
+        bookService.setBookAvailability(added.id(), false);
+
+        IllegalStateException ex = assertThrows(IllegalStateException.class,
+            () -> bookService.deleteBook(added.id()));
+
+        assertTrue(ex.getMessage().contains("currently borrowed"));
     }
 }
